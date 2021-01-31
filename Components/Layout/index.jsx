@@ -1,17 +1,14 @@
-import Head from "next/head";
+
 import styles from "./index.module.css";
 import Image from "next/image";
 import { Grid } from "../Grid";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Layout({ children }) {
   return (
     <Grid>
-      <Head>
-        <title>Gateways Suite</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
+      <ToastContainer />
       <main className={styles.main}>{children}</main>
 
       <footer className={styles.footer}>
@@ -30,6 +27,6 @@ export default function Layout({ children }) {
           />
         </a>
       </footer>
-      </Grid>
+    </Grid>
   );
 }
