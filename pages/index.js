@@ -7,7 +7,7 @@ import { Col, Grid, Row } from "../Components/Grid";
 export default function Home() {
   return (
     <Layout>
-     <Head>
+      <Head>
         <title>Gateways Suite</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -23,7 +23,12 @@ export default function Home() {
         <Row>
           <Col size={1}>
             <div className={styles.panel}>
-              <Link href="/gateways">
+              <Link
+                href={{
+                  pathname: "/gateways",
+                  query: { offset: 0 },
+                }}
+              >
                 <a className={styles.card}>
                   <h3>Gateways &rarr;</h3>
                   <p>All availables gateways</p>
