@@ -1,13 +1,17 @@
 import styled from "styled-components";
 
-export const Grid = styled.div`
+const Grilla = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
 `;
-export const Row = styled.div`
+export const Grid = (props)=> <Grilla {...props} />
+
+const Rw = styled.div`
   display: flex;
 `;
+
+export const Row = (props)=> <Rw {...props} />
 
 const media = {
   xs: (styles) => `
@@ -16,7 +20,8 @@ const media = {
     }
     `,
 };
-export const Col = styled.div`
+
+const Cl = styled.div`
   flex: ${(props) => props.size};
   ${(props) =>
     props.collapse &&
@@ -24,3 +29,5 @@ export const Col = styled.div`
      display: none;
     `)}
 `;
+
+export const Col = (props)=> <Cl {...props} />
