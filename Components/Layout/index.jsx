@@ -13,18 +13,12 @@ export default function Layout({ children }) {
 
       <footer className={styles.footer}>
         <a
-          href="http://www.musala.com/"
+          href="http://www.google.com/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{" "}
-          <Image
-            src="/Musala_Logo_white.svg"
-            alt="Musala Soft"
-            width={50}
-            height={50}
-            className={styles.logo}
-          />
+          Powered by Me!
+         
         </a>
       </footer>
     </Grid>

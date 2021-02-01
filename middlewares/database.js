@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import nextConnect from "next-connect";
 
-const client = new MongoClient("mongodb://localhost:27017", {
+const client = new MongoClient(env.proccess.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -51,7 +51,7 @@ const SchemaValidator = {
 async function database(req, res, next) {
   if (!client.isConnected()) await client.connect();
   req.dbClient = client;
-  req.db = client.db("musala");
+  req.db = client.db(env.proccess.DB_NAME);
   req.db.command({
     collMod: "gateways",
     validator: SchemaValidator,

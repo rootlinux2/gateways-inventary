@@ -35,21 +35,6 @@ handler.get(async (req, res) => {
     res.json({ result: 2, message: error.message });
   }
 });
-// handler.get(async (req, res) => {
-//   try {
-//     const { limit = 10, skip = 0 } = req.query;
-//     const docs = await req.db
-//       .collection("gateways")
-//       .find({})
-//       .skip(parseInt(skip))
-//       .limit(parseInt(limit))
-//       .toArray();
-
-//     res.json({ result: 1, docs: docs });
-//   } catch (error) {
-//     res.json({ result: 2, message: error.message });
-//   }
-// });
 
 handler.post(async (req, res) => {
   try {
