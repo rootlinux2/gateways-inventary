@@ -1,3 +1,89 @@
-.title{
-    margin-top: 2%;
+.titleWrapper {
+  text-align: center;
+  background-color: #f3f3f3;
+  padding: 2rem 0;
+}
+.listWrapper>ol{
+  list-style: none;
+  
+}
+.listWrapper>ol>li{
+  width: 100%;
+}
+.title {
+  margin-top: 2% 0 4% 0;
+  color: #575757;
+}
+.listWrapper {
+  display: flex;
+  padding: 2rem 20%;
+  min-height: 60vh;
+}
+.loadingWrapper{
+  display: flex;
+  flex-direction: row !important;
+  justify-content: center;
+  width: 100%;
+  min-height: 60vh;
+}
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+.paginationWrapper > ul {
+  display: inline-block;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.paginationWrapper > ul > li {
+  display: inline-block;
+  
+}
+.pagination {
+  padding: 1.3rem 0;
+}
+.pages:hover {
+  cursor: pointer;
+
+}
+.pages {
+  cursor: pointer;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 1.3rem;
+}
+.pages:active {
+  cursor: pointer;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 1.3rem;
+  background-color: rgb(70, 70, 70);
+}
+
+.active {
+  background-color: rgb(70, 70, 70);
+  color: whitesmoke;
+  border-radius: 1.3rem;
+}
+.activeLink{
+  color: whitesmoke;
+  border-radius: 1.3rem;
+}
+.previousClassName{
+  display: flex;
+  align-content: center;
+}
+.nextClassName{
+  display: flex;
+  align-content: center;
+  
+}
+.previousLinkClassName{
+  padding:  0 .6rem;
+
+}
+.nextLinkClassName{
+  padding:  0 .6rem;
+
 }
