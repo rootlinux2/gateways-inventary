@@ -9,35 +9,49 @@ import Axios from "axios";
 import Spinner from "../../Components/Spinner";
 import ReactPaginate from "react-paginate";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
-import { useRouter } from "next/router";
+import { Animated } from "react-animated-css";
 
-export default function Gateways({offset}) {
+export default function Gateways() {
   //   const [gateways, setGateways] = useState([]);
   const [gatewaysF, setgatewaysF] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
-  //   const [offset, setOffset] = useState(0);
-  const router = useRouter();
+  const [offset, setOffset] = useState(0);
 
   const limit = 5;
 
   useEffect(() => {
     setLoading(true);
-    Axios.get(`api/gateways?limit=${limit}&skip=${router.query.offset}`).then(
-      (response) => {
-        setgatewaysF([...response.data.docs]);
-        setPagesCount(response.data.metadata.total / limit);
-        toast.success("data loaded!");
-        setLoading(false);
+    Axios.get(`api/gateways?limit=${limit}&skip=${offset}`).then((response) => {
+      setgatewaysF([...response.data.docs]);
+      setPagesCount(response.data.metadata.total / limit);
+      toast.success("data loaded!");
+      setLoading(false);
+    });
+  }, [offset]);
+
+  const handleGatewayChange = (gtw) => {
+    const tmp = gatewaysF.map((g) => {
+      if (g._id === gtw._id) {
+        return gtw;
       }
-    );
-  }, [router.query]);
+      return g;
+    });
+
+    setgatewaysF([...tmp]);
+    toast.success("Gateway updated!");
+  };
+
+  const handleGatewayDelete = (gtw) => {
+    const tmp = gatewaysF.filter((g) => g._id !== gtw._id);
+    setgatewaysF([...tmp]);
+    toast.success("Gateway deleted!");
+  };
 
   return (
     <Layout>
       <Head>
         <title>GS - Gateways</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Grid>
         <Row>
@@ -51,12 +65,26 @@ export default function Gateways({offset}) {
           </Grid>
         ) : (
           <Grid className={styles.listWrapper}>
-          <ol>
-
-            {gatewaysF &&
-              gatewaysF.length > 0 &&
-              gatewaysF.map((g) => <li key={g.name}><GatewaysRow gateway={g} /></li>)}
-          </ol>
+            <ol>
+              {gatewaysF &&
+                gatewaysF.length > 0 &&
+                gatewaysF.map((g) => (
+                  <Animated
+                    animationIn="fadeInUp"
+                    animationOut="fadeOut"
+                    animationInDelay={Math.floor(Math.random() * 100) + 1}
+                    isVisible={true}
+                  >
+                    <li key={g.name}>
+                      <GatewaysRow
+                        gateway={g}
+                        handleChange={handleGatewayChange}
+                        handleDelete={handleGatewayDelete}
+                      />
+                    </li>
+                  </Animated>
+                ))}
+            </ol>
           </Grid>
         )}
         <Row className={styles.paginationWrapper}>
@@ -69,14 +97,7 @@ export default function Gateways({offset}) {
             marginPagesDisplayed={2}
             pageRangeDisplayed={5}
             // forcePage={parseInt(offset, 10)}
-            onPageChange={(e) => {
-              if(e.selected &&  parseInt(router.query.offset, 10) !== e.selected){
-              router.push({
-                pathname: "/gateways",
-                query: { offset: e.selected },
-              });
-              }
-            }}
+            onPageChange={(e) => setOffset(e.selected)}
             containerClassName={styles.pagination}
             pageLinkClassName={styles.pages}
             activeClassName={styles.active}

@@ -40,6 +40,10 @@
   display: inline-block;
   
 }
+.paginationWrapper > ul > li:focus {
+  border-radius: 1.3rem;
+  
+}
 .pagination {
   padding: 1.3rem 0;
 }
@@ -51,14 +55,21 @@
   cursor: pointer;
   padding-left: 15px;
   padding-right: 15px;
-  border-radius: 1.3rem;
+  /* border-radius: 1.3rem; */
 }
 .pages:active {
   cursor: pointer;
   padding-left: 15px;
   padding-right: 15px;
-  border-radius: 1.3rem;
+  /* border-radius: 1.3rem; */
   background-color: rgb(70, 70, 70);
+}
+.pages:focus {
+  cursor: pointer;
+  padding-left: 15px;
+  padding-right: 15px;
+  /* border-radius: 1.3rem; */
+  background-color: rgb(201, 201, 201);
 }
 
 .active {
