@@ -39,18 +39,31 @@ handler.get(async (req, res) => {
 handler.post(async (req, res) => {
   try {
     const data = req.body;
-    data.date = new Date(data.date);
+    delete data._id;
     const docs = await req.db
-      .collection("gateways")
-      .updateOne(
-        { date: new Date(data.date) },
-        { $set: data },
-        { upsert: true }
+    .collection("gateways")
+    .updateOne(
+      { serialNumber: data.serialNumber },
+      { $set: data },
+      { upsert: true }
       );
+      
     res.json({ result: 1, docs });
   } catch (error) {
     res.json({ result: 2, message: error.message });
   }
+});
+
+handler.delete(async (req, res) => {
+  try {
+    var mongodb = require('mongodb');
+   const docs = await req.db
+   .collection("gateways").deleteOne( { _id : new mongodb.ObjectID(req.body.id) } );
+    res.json({ result: 1, docs });
+  } catch (error) {
+    res.json({ result: 2, message: error.message });
+  }
+  
 });
 
 export default handler;
