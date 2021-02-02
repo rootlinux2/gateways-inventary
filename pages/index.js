@@ -26,7 +26,6 @@ export default function Home() {
               <Link
                 href={{
                   pathname: "/gateways",
-                  query: { offset: 0 },
                 }}
               >
                 <a className={styles.card}>
