@@ -23,6 +23,14 @@ export default function Gateways() {
 
   useEffect(() => {
     setLoading(true);
+    // Axios.post(`api/gateways/withFilters`, { limit: limit, skip: offset , filter: 'Littel'}).then(
+    //   (response) => {
+    //     setgatewaysF([...response.data.docs]);
+    //     setPagesCount(response.data.metadata.total / limit);
+    //     toast.success("data loaded!");
+    //     setLoading(false);
+    //   }
+    // );
     Axios.get(`api/gateways?limit=${limit}&skip=${offset}`).then((response) => {
       setgatewaysF([...response.data.docs]);
       setPagesCount(response.data.metadata.total / limit);
@@ -32,8 +40,6 @@ export default function Gateways() {
   }, [offset]);
 
   const handleGatewayChange = (gtw) => {
-  console.log("🚀 ~ file: index.jsx ~ line 35 ~ handleGatewayChange ~ gtw", gtw)
-    
     const tmp = gatewaysF.map((g) => {
       if (g._id === gtw._id) {
         return gtw;
@@ -78,7 +84,11 @@ export default function Gateways() {
           </Grid>
         ) : (
           <Grid className={Styles.listWrapper}>
-            <ActionRow handleAddAction={handleGatewayAdd} total={pagesCount*limit} title="Gateways" />
+            <ActionRow
+              handleAddAction={handleGatewayAdd}
+              total={pagesCount * limit}
+              title="Gateways"
+            />
             <ol>
               {gatewaysF &&
                 gatewaysF.length > 0 &&
