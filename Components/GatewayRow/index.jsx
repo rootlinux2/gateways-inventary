@@ -259,7 +259,7 @@ const GatewaysRow = ({
           <span className={Styles.value}>{gateway.ipAddress}</span>
         </Col>
         <Col size={0.3} className={Styles.column}>
-          <span className={Styles.label}>Pripherals:</span>
+          <span className={Styles.label}>Peripherals:</span>
           <span className={Styles.value}>
             {(gateway.peripheral && gateway.peripheral.length) || 0}/10
           </span>
