@@ -1,10 +1,11 @@
 .titleWrapper {
   text-align: center;
   background-color: #f3f3f3;
-  padding: 2rem 0;
+  padding: 1.2rem 0;
 }
 .listWrapper>ol{
   list-style: none;
+  padding: 0;
   
 }
 .listWrapper>ol>li{

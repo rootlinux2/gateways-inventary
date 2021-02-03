@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import styles from "./index.module.css";
+import Styles from "./index.module.css";
 import Layout from "../../Components/Layout";
 import { Col, Grid, Row } from "../../Components/Grid";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import Spinner from "../../Components/Spinner";
 import ReactPaginate from "react-paginate";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { Animated } from "react-animated-css";
+import ActionRow from "../../Components/ActionsRow";
 
 export default function Gateways() {
   //   const [gateways, setGateways] = useState([]);
@@ -18,7 +19,7 @@ export default function Gateways() {
   const [pagesCount, setPagesCount] = useState(0);
   const [offset, setOffset] = useState(0);
 
-  const limit = 5;
+  const limit = 8;
 
   useEffect(() => {
     setLoading(true);
@@ -31,6 +32,8 @@ export default function Gateways() {
   }, [offset]);
 
   const handleGatewayChange = (gtw) => {
+  console.log("🚀 ~ file: index.jsx ~ line 35 ~ handleGatewayChange ~ gtw", gtw)
+    
     const tmp = gatewaysF.map((g) => {
       if (g._id === gtw._id) {
         return gtw;
@@ -47,6 +50,16 @@ export default function Gateways() {
     setgatewaysF([...tmp]);
     toast.success("Gateway deleted!");
   };
+  const handleGatewayAdd = () => {
+    const tmp = {
+      serialNumber: "",
+      name: "",
+      ipAddress: "",
+      peripheral: [],
+      toCreate: true,
+    };
+    setgatewaysF([{ ...tmp }, ...gatewaysF]);
+  };
 
   return (
     <Layout>
@@ -55,16 +68,17 @@ export default function Gateways() {
       </Head>
       <Grid>
         <Row>
-          <Col size={1} className={styles.titleWrapper}>
-            <h1 className={styles.title}>Gatways</h1>
+          <Col size={1} className={Styles.titleWrapper}>
+            <h1 className={Styles.title}>Gatways</h1>
           </Col>
         </Row>
         {loading ? (
-          <Grid className={styles.loadingWrapper}>
+          <Grid className={Styles.loadingWrapper}>
             <Spinner radius="34px" />
           </Grid>
         ) : (
-          <Grid className={styles.listWrapper}>
+          <Grid className={Styles.listWrapper}>
+            <ActionRow handleAddAction={handleGatewayAdd} total={pagesCount*limit} title="Gateways" />
             <ol>
               {gatewaysF &&
                 gatewaysF.length > 0 &&
@@ -74,12 +88,14 @@ export default function Gateways() {
                     animationOut="fadeOut"
                     animationInDelay={Math.floor(Math.random() * 100) + 1}
                     isVisible={true}
+                    key={g.name}
                   >
-                    <li key={g.name}>
+                    <li>
                       <GatewaysRow
-                        gateway={g}
+                        gtw={g}
                         handleChange={handleGatewayChange}
                         handleDelete={handleGatewayDelete}
+                        edditable={g.toCreate ? g.toCreate : false}
                       />
                     </li>
                   </Animated>
@@ -87,7 +103,7 @@ export default function Gateways() {
             </ol>
           </Grid>
         )}
-        <Row className={styles.paginationWrapper}>
+        <Row className={Styles.paginationWrapper}>
           <ReactPaginate
             previousLabel={<BsChevronCompactLeft />}
             nextLabel={<BsChevronCompactRight />}
@@ -98,14 +114,14 @@ export default function Gateways() {
             pageRangeDisplayed={5}
             // forcePage={parseInt(offset, 10)}
             onPageChange={(e) => setOffset(e.selected)}
-            containerClassName={styles.pagination}
-            pageLinkClassName={styles.pages}
-            activeClassName={styles.active}
-            activeLinkClassName={styles.activeLink}
-            previousClassName={styles.previousClassName}
-            nextClassName={styles.nextClassName}
-            previousLinkClassName={styles.previousLinkClassName}
-            nextLinkClassName={styles.nextLinkClassName}
+            containerClassName={Styles.pagination}
+            pageLinkClassName={Styles.pages}
+            activeClassName={Styles.active}
+            activeLinkClassName={Styles.activeLink}
+            previousClassName={Styles.previousClassName}
+            nextClassName={Styles.nextClassName}
+            previousLinkClassName={Styles.previousLinkClassName}
+            nextLinkClassName={Styles.nextLinkClassName}
           />
         </Row>
       </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Row } from "../Grid";
 import Styles from "./index.module.css";
 import { IconContext } from "react-icons";
@@ -15,6 +15,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Axios from "axios";
 import { toast } from "react-toastify";
+import ActionRow from "../ActionsRow";
 
 function ipv4(message = "Invalid IP address") {
   return this.matches(/(^(\d{1,3}\.){3}(\d{1,3})$)/, {
@@ -30,7 +31,7 @@ function ipv4(message = "Invalid IP address") {
 Yup.addMethod(Yup.string, "ipv4", ipv4);
 
 const GatewaysRow = ({
-  gateway,
+  gtw,
   edditable = false,
   handleChange = () => {},
   handleDelete = () => {},
@@ -39,7 +40,11 @@ const GatewaysRow = ({
   const [isEdditable, setIsEdditable] = useState(edditable);
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteCconfimation, setShowDeleteCconfimation] = useState(false);
+  const [gateway, setGateway] = useState({});
 
+  useEffect(() => {
+    setGateway(gtw);
+  }, [gtw]);
   const gatewaySchema = Yup.object().shape({
     serialNumber: Yup.string()
       .min(5, "Too Short!")
@@ -51,12 +56,6 @@ const GatewaysRow = ({
       .required("Required"),
     ipAddress: Yup.string().ipv4().required("Required"),
   });
-  const deleteSchema = Yup.object().shape({
-    confirm: Yup.string()
-      .min(7, "Too Short!")
-      .max(7, "Too Long!")
-      .required("This field is Required!"),
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -67,18 +66,27 @@ const GatewaysRow = ({
     validationSchema: gatewaySchema,
     onSubmit: (values) => {
       setIsLoading(true);
-      Axios.post(`/api/gateways`, { ...gateway, ...values }).then(
-        (response) => {
-          if (response.data.result === 1) {
-            handleChange({ ...gateway, ...values });
-          } else {
-            toast.error("Something whent wrong!");
-          }
-          setIsLoading(false);
-          setIsEdditable(false);
-        }
-      );
+     return updateGateway({ ...gateway, ...values });
     },
+  });
+
+  const updateGateway = async(gtw) => {
+    delete gtw.toCreate;
+    return Axios.post(`/api/gateways`, { ...gtw }).then((response) => {
+      if (response.data.result === 1) {
+        handleChange({ ...gtw });
+        setIsLoading(false);
+        setIsEdditable(false);
+      } else {
+        toast.error("Something whent wrong!");
+      }
+    });
+  };
+  const deleteSchema = Yup.object().shape({
+    confirm: Yup.string()
+      .min(7, "Too Short!")
+      .max(7, "Too Long!")
+      .required("This field is Required!"),
   });
   const formikDel = useFormik({
     initialValues: {
@@ -92,14 +100,51 @@ const GatewaysRow = ({
 
   const deleteGateway = () => {
     setIsLoading(true);
-    Axios.delete(`/api/gateways`, { data: { id: gateway._id } }).then((response) => {
-      if (response.data.result === 1) {
-        handleDelete(gateway);
-      } else {
-        toast.error("Something whent wrong!");
+    Axios.delete(`/api/gateways`, { data: { id: gateway._id } }).then(
+      (response) => {
+        if (response.data.result === 1) {
+          handleDelete(gateway);
+        } else {
+          toast.error("Something whent wrong!");
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    );
+  };
+
+  const handleAddPeripheral = () => {
+    const tmp = {
+      uuid: "",
+      vendor: "",
+      dateCreated: "",
+      status: "",
+      toCreate: true,
+    };
+    setGateway({ ...gateway, peripheral: [{ ...tmp }, ...gateway.peripheral] });
+  };
+  const handleRemovePeripheral = async(item) => {
+    const tmp = gateway.peripheral.filter(
+      (p) => p.uuid !== item.uuid && p.vendor !== item.vendor
+    );
+
+   return updateGateway({ ...gateway, peripheral: [...tmp] });
+  };
+  const handleUpdatePeripheral = async(item) => {
+  console.log("🚀 ~ file: index.jsx ~ line 133 ~ handleUpdatePeripheral ~ item", item)
+    const tmp = gateway.peripheral.map(
+      (p) => {
+        if(p.toCreate && item.toCreate){
+          delete item.toCreate;
+          return item;
+        }else if(p.uuid === item.uuid){
+          delete item.toCreate;
+          return item;
+        }
+        return p;
+      }
+    );
+
+   return updateGateway({ ...gateway, peripheral: [...tmp] });
   };
 
   return isEdditable ? (
@@ -213,12 +258,18 @@ const GatewaysRow = ({
           <span className={Styles.label}>IP:</span>
           <span className={Styles.value}>{gateway.ipAddress}</span>
         </Col>
+        <Col size={0.3} className={Styles.column}>
+          <span className={Styles.label}>Pripherals:</span>
+          <span className={Styles.value}>
+            {(gateway.peripheral && gateway.peripheral.length) || 0}/10
+          </span>
+        </Col>
 
         <Col size={0.1} className={Styles.column}>
           <IconContext.Provider value={{ size: "1.3em" }}>
             <div className={Styles.btnWrapper}>
               <Button
-                title="show"
+                title="Show peripherals"
                 color="black"
                 border="none"
                 margin="0"
@@ -306,19 +357,32 @@ const GatewaysRow = ({
       )}
 
       {showPeripherals && (
-        <Row className={Styles.listWrapper}>
-          <ol>
-            {gateway.peripheral.length > 0 ? (
-              gateway.peripheral.map((p) => (
-                <li key={p.uuid}>
-                  <PeripheralRow peripheral={p} />
-                </li>
-              ))
-            ) : (
-              <h1> No peripherals</h1>
-            )}
-          </ol>
-        </Row>
+        <div className={Styles.peripheralsWrapper}>
+          <ActionRow
+            handleAddAction={handleAddPeripheral}
+            total={gateway.peripheral && gateway.peripheral.length}
+            title="Peripherals"
+            showButton={gateway.peripheral.length < 10}
+          />
+          <Row className={Styles.listWrapper}>
+            <ol>
+              {gateway.peripheral.length > 0 ? (
+                gateway.peripheral.map((p) => (
+                  <li key={p.uuid}>
+                    <PeripheralRow
+                      peripheral={p}
+                      edditable={p.toCreate ? p.toCreate : false}
+                      handleDelete={handleRemovePeripheral}
+                      handleChange={handleUpdatePeripheral}
+                    />
+                  </li>
+                ))
+              ) : (
+                <h6> No peripherals</h6>
+              )}
+            </ol>
+          </Row>
+        </div>
       )}
     </>
   );
